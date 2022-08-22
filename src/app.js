@@ -26,7 +26,7 @@ import http from "http";
     .listen(config.port, () => {
       console.info(`
       ################################################
-      🛡️  Server listening on port: http://localhost:${config.port} 🛡️
+      🛡️  Server listening on port: http://localhost:${config.port}/api 🛡️
       ################################################
     `);
     })

@@ -8,3 +8,12 @@ export const MESSAGE_TYPE = {
   AUDIO: "AUDIO",
   TEXT: "TEXT",
 };
+export const MESSAGE_STATE = {
+  DELIVERED: "DELIVERED",
+  READ: "READ",
+};
+
+export const CALL_TYPE = {
+  VIDEO: "VIDEO",
+  VOICE: "VOICE",
+};
