@@ -34,7 +34,9 @@ const userSchema = new Schema(
       type: String,
     },
     // users need to have notifications
-    // settings
+    // UIpref=>themeColor
+    // privacyPref
+    // last seen: type Date
   },
   { timestamps: true }
 );

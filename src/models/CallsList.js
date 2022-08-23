@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { CALL_TYPE } from "@/constant";
 
 const { Schema } = mongoose;
-const callHistorySchema = new Schema(
+const callListSchema = new Schema(
   {
     // call history type: video or call
     type: {
@@ -18,6 +18,6 @@ const callHistorySchema = new Schema(
   { timestamps: true }
 );
 
-const model = mongoose.model("CallHistory", callHistorySchema);
-export const schema = callHistorySchema.obj;
+const model = mongoose.model("CallList", callListSchema);
+export const schema = callListSchema.obj;
 export default model;

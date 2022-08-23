@@ -4,6 +4,7 @@ import { CHAT_TYPE } from "@/constant";
 const { Schema } = mongoose;
 const chatSchema = new Schema(
   {
+    // state for archive:: prolly just a archived boolean field
     name: {
       type: String,
       required: true,

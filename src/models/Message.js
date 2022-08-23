@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
 import { MESSAGE_TYPE, MESSAGE_STATE } from "@/constant";
 
+/**
+ * types of media
+ * attachment will not have media preview and will not be compressed while media ha spreview and is compressed
+ */
 const { Schema } = mongoose;
 const messageSchema = new Schema(
   {
