@@ -1,7 +1,10 @@
 import UserModel, { schema } from "@/models/user";
 
 function getUser() {}
-export async function createProfile({ email, username, password }) {}
+export async function createProfile({ email, username, password }) {
+  return 4;
+}
+
 export async function validateCredentials({ email, password }) {}
 export function getUserByEmail() {}
 

@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
 // import middlewares from "../middlewares";
-import UserService from "@/services/users";
+import * as UserService from "@/services/users";
 
 import { body, validationResult } from "express-validator";
 

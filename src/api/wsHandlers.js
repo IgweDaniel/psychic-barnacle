@@ -1,5 +1,5 @@
 import UserService from "@/services/users";
-import RoomService from "@/services/room";
+// import ChatService from "@/services/chat";
 
 export default (wss) => {
   wss.on("connection", function connection(ws, request, client) {

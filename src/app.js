@@ -2,8 +2,18 @@ import loaders from "./loaders";
 import config from "@/config";
 import http from "http";
 
+/**
+ * Remove Later
+ */
+import { MongoMemoryServer } from "mongodb-memory-server";
+const mongod = await MongoMemoryServer.create();
+const uri = mongod.getUri();
+
 (async function () {
-  const [app, wss] = await loaders();
+  /**
+   * replace this URI later on
+   */
+  const [app, wss] = await loaders({ dbUri: uri });
 
   const server = http.createServer(app);
 

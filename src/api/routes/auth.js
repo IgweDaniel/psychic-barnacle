@@ -43,4 +43,13 @@ export default (appRouter) => {
       console.log(req.params);
     }
   );
+
+  route.post("/verify/", body("email").isEmail(), async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ msg: "Account not found" });
+    }
+
+    console.log(req.params);
+  });
 };
