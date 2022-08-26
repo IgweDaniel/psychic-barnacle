@@ -15,7 +15,12 @@ const callListSchema = new Schema(
       ref: "Users",
     },
   },
-  { timestamps: true }
+  { timestamps: true },
+  {
+    toJSON: {
+      virtuals: true,
+    },
+  }
 );
 
 const model = mongoose.model("CallList", callListSchema);

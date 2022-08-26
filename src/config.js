@@ -15,5 +15,6 @@ export default {
 
   api: {
     prefix: "/api",
+    secret: process.env.SESSION_SECRET,
   },
 };

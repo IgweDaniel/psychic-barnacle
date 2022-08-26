@@ -34,7 +34,12 @@ const messageSchema = new Schema(
 
     // might add reply to particular chat (reply to message)
   },
-  { timestamps: true }
+  { timestamps: true },
+  {
+    toJSON: {
+      virtuals: true,
+    },
+  }
 );
 
 const model = mongoose.model("Messages", messageSchema);

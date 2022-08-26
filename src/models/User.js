@@ -11,7 +11,7 @@ const userSchema = new Schema(
       trim: true,
       lowercase: true,
     },
-    name: {
+    username: {
       type: String,
       required: true,
       trim: true,
@@ -38,7 +38,12 @@ const userSchema = new Schema(
     // privacyPref
     // last seen: type Date
   },
-  { timestamps: true }
+  { timestamps: true },
+  {
+    toJSON: {
+      virtuals: true,
+    },
+  }
 );
 
 const model = mongoose.model("Users", userSchema);

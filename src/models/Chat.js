@@ -22,7 +22,12 @@ const chatSchema = new Schema(
     members: [{ type: Schema.Types.ObjectId, required: true, ref: "Users" }],
     admin: { type: Schema.Types.ObjectId, ref: "Users" },
   },
-  { timestamps: true }
+  { timestamps: true },
+  {
+    toJSON: {
+      virtuals: true,
+    },
+  }
 );
 
 const model = mongoose.model("Chats", chatSchema);

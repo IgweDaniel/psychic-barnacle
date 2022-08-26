@@ -1,6 +1,6 @@
-import { Router, Request, Response } from "express";
+import { Router } from "express";
 // import middlewares from "../middlewares";
-import * as UserService from "@/services/users";
+import { UserService } from "@/services";
 
 import { body, validationResult } from "express-validator";
 
@@ -19,8 +19,9 @@ export default (appRouter) => {
       if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
       }
+      const { email, password, username } = req.body;
 
-      await UserService.createProfile(req.body);
+      await UserService.createProfile(email, password, username);
 
       return res.json({ msg: "Account Registered" }).status(200);
     }

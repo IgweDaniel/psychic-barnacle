@@ -17,3 +17,8 @@ export const CALL_TYPE = {
   VIDEO: "VIDEO",
   VOICE: "VOICE",
 };
+export const ERRORS = {
+  DUPLICATE: "DUPLICATE",
+  UNKNOWN: "UNKNOWN",
+  BAD_ARGS: "BAD_ARGS",
+};

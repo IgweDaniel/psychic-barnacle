@@ -4,6 +4,7 @@ import wsLoader from "./ws";
 
 async function init(ctx) {
   await mongooseLoader(ctx.dbUri);
+
   return [expressLoader(), wsLoader()];
 }
 
