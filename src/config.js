@@ -12,9 +12,10 @@ if (envFound.error) {
 export default {
   port: parseInt(process.env.PORT, 10),
   databaseURL: process.env.DBURL,
-
+  websiteUrl: process.env.WEBSITE_URL,
   api: {
     prefix: "/api",
     secret: process.env.SESSION_SECRET,
+    jwtSecret: process.env.JWT_SECRET,
   },
 };

@@ -2,11 +2,8 @@ const bcrypt = require("bcryptjs");
 import UserModel from "@/models/user";
 import { ERRORS } from "@/constants";
 
-function getUser() {}
-
 export async function validateCredentials({}) {}
 
-export function authenticate() {}
 export function changeAvatar() {}
 export function editProfile() {}
 export function updateUIPref() {}
@@ -34,25 +31,36 @@ export async function createProfile({ email, username, password }) {
     //
   }
 }
-export async function getUserProfile({ username, email, id }) {
+export async function getUser(cond) {
   let user = null;
-  const cond = {
-    ...(id && { _id: id }),
-    ...(username && { username }),
-    ...(email && { email }),
-  };
-
-  if (Object.keys(cond) < 1) return user;
   try {
     user = await UserModel.findOne(cond);
   } catch (error) {
-    console.log({ error });
     if (!error.message.includes("Cast")) {
       throw error;
     }
   }
   return user;
 }
+
+export async function validateCreds({ username, password }) {
+  try {
+    const user = await getUser({ username });
+    if (!user) {
+      return null;
+    }
+
+    const passwordValid = bcrypt.compareSync(password, user.password);
+
+    if (!passwordValid) {
+      return null;
+    }
+    return user;
+  } catch (error) {
+    throw error;
+  }
+}
+export function verifyUser(verificationCode) {}
 
 export function scheduleAcctDeletion() {}
 

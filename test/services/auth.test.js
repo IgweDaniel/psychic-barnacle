@@ -1,13 +1,26 @@
-describe("Access Token", () => {
-  //   test("creates user profile in db", async () => {
-  //     const deets = {
-  //       email: "daniel@gmail.com",
-  //       username: "chiboy",
-  //       password: "12345",
-  //     };
-  //     await UserService.createProfile(deets);
-  //     const user = await UserModel.findOne({ username: deets.username });
-  //     expect(deets.email).toBe(user.email);
-  //     expect(deets.username).toBe(user.username);
-  //   });
+import UserModel from "@/models/user";
+import { ERRORS } from "@/constants";
+import VerifyTokenModel from "@/models/VerifyToken";
+import { AuthService, UserService } from "@/services";
+
+let testUser;
+beforeEach(async () => {
+  testUser = await UserModel.create({
+    email: "test_email@mail.com",
+    password: "test_password",
+    username: "test_username",
+  });
+});
+
+test("creates and returns verificationLink for exisiting email", async () => {
+  const link = await AuthService.createVerifyLink(testUser.email);
+  expect(link).toBeTruthy();
+
+  const token = await VerifyTokenModel.findOne({
+    user: testUser,
+    token: link.substr(link.lastIndexOf("/") + 1),
+  }).populate("user");
+
+  expect(token).toBeTruthy();
+  expect(token.user.id).toBe(testUser.id);
 });

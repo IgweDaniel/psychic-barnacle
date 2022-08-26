@@ -11,6 +11,10 @@ const userSchema = new Schema(
       trim: true,
       lowercase: true,
     },
+    verified: {
+      type: Boolean,
+      default: true,
+    },
     username: {
       type: String,
       required: true,
