@@ -1,5 +1,6 @@
 const bcrypt = require("bcryptjs");
 import UserModel from "@/models/user";
+import VerifyTokenModel from "@/models/VerifyToken";
 import { ERRORS } from "@/constants";
 
 export async function validateCredentials({}) {}
@@ -7,9 +8,7 @@ export async function validateCredentials({}) {}
 export function changeAvatar() {}
 export function editProfile() {}
 export function updateUIPref() {}
-export function verifyEmail() {}
-export function changePassword() {}
-export function resetPassword() {}
+
 export async function createProfile({ email, username, password }) {
   try {
     const salt = bcrypt.genSaltSync(10);
@@ -31,47 +30,100 @@ export async function createProfile({ email, username, password }) {
     //
   }
 }
-export async function getUser(cond) {
-  let user = null;
+export async function getUser({ email, id, username }) {
+  const cond = {
+    ...(id && { _id: id }),
+    ...(username && { username }),
+    ...(email && { email }),
+  };
   try {
-    user = await UserModel.findOne(cond);
-  } catch (error) {
-    if (!error.message.includes("Cast")) {
-      throw error;
+    if (Object.keys(cond) < 1) {
+      return null;
     }
+    const user = await UserModel.findOne(cond);
+    return user;
+  } catch (error) {
+    if (error.message.includes("Cast")) {
+      return null;
+    }
+    throw error;
   }
-  return user;
 }
 
 export async function validateCreds({ username, password }) {
   try {
     const user = await getUser({ username });
-    if (!user) {
-      return null;
+    if (user) {
+      const passwordValid = bcrypt.compareSync(password, user.password);
+      return passwordValid ? user : null;
     }
-
-    const passwordValid = bcrypt.compareSync(password, user.password);
-
-    if (!passwordValid) {
-      return null;
-    }
-    return user;
+    return null;
   } catch (error) {
     throw error;
   }
 }
-export function verifyUser(verificationCode) {}
+export async function verifyUser(token) {
+  try {
+    const verifyToken = await VerifyTokenModel.findOne({ token });
+
+    if (verifyToken) {
+      const res = await UserModel.updateOne(
+        { user: verifyToken.user },
+        { verified: true }
+      );
+
+      return res.acknowledged;
+    }
+
+    return false;
+  } catch (error) {
+    if (error.message.includes("Cast")) {
+      return false;
+    }
+    throw error;
+  }
+}
+
+export async function changePassword(userId, password) {
+  try {
+    const salt = bcrypt.genSaltSync(10);
+    const hash = bcrypt.hashSync(password, salt);
+    const res = await UserModel.updateOne({ _id: userId }, { password: hash });
+
+    return res.acknowledged;
+  } catch (error) {
+    if (error.message.includes("Cast")) {
+      return false;
+    }
+    throw error;
+  }
+}
+// export function resetPassword(token, password) {}
 
 export function scheduleAcctDeletion() {}
 
 export function blockUser() {}
 export function favoriteUser() {}
 
-export function addContact() {}
+export function addContact(user, email) {}
 export function deleteContact() {}
 export function updateContact() {}
 export function getContactList() {}
 
-export function addToCallList() {}
-export function clearCallList() {}
+export async function addToCallList(user, call) {
+  try {
+    const callUser = await getUser({ id: call.userId });
+
+    if (!callUser) {
+      throw new Error(ERRORS.NONEXISTENT_ENTITY);
+    }
+    user.calls.push({ type: call?.callType, user: callUser });
+    const newUser = await user.save();
+
+    return newUser.calls;
+  } catch (error) {
+    throw error;
+  }
+}
+export function clearCallList(user) {}
 export function getCallList() {}

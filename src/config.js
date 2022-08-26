@@ -17,5 +17,6 @@ export default {
     prefix: "/api",
     secret: process.env.SESSION_SECRET,
     jwtSecret: process.env.JWT_SECRET,
+    verifyTokenDuration: 10 * 60,
   },
 };

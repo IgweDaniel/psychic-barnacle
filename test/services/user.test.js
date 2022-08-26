@@ -1,16 +1,7 @@
-import { UserService } from "@/services";
+import { UserService, AuthService } from "@/services";
 import UserModel from "@/models/user";
 import { Types } from "mongoose";
-import { ERRORS } from "@/constants";
-let testUser;
-
-beforeEach(async () => {
-  testUser = await UserModel.create({
-    email: "test_email@mail.com",
-    username: "test_username",
-    password: "test_password",
-  });
-});
+import { ERRORS, CALL_TYPE } from "@/constants";
 
 describe("profile Creation", () => {
   test("creates user profile in db", async () => {
@@ -116,9 +107,127 @@ describe("User Creds Validation", () => {
 });
 
 describe("Verify User", () => {
-  // test("returns user profile with valid id, username, email in db", async () => {
-  //   let user = await UserService.getUser({ email: testUser.email });
-  //   expect(user).toBeTruthy();
-  //   expect(testUser.email).toBe(user.email);
-  // });
+  let testUser;
+
+  beforeEach(async () => {
+    testUser = await UserModel.create({
+      email: "test_email@mail.com",
+      username: "test_username",
+      password: "test_password",
+    });
+  });
+  test("updates verified state given valid verifyToken", async () => {
+    const link = await AuthService.createVerifyLink(testUser.email);
+    const token = link.substr(link.lastIndexOf("/") + 1);
+
+    const verified = await UserService.verifyUser(token);
+    expect(verified).toBeTruthy();
+
+    const user = await UserService.getUser({ email: testUser.email });
+    expect(user.verified).toBeTruthy();
+  });
+
+  test("fails to update verified state given invalid verifyToken", async () => {
+    const verified = await UserService.verifyUser("<faketokenid>");
+    expect(verified).toBeFalsy();
+  });
 });
+
+describe("Update User Password", () => {
+  let testUser,
+    testPassword = "12345";
+  beforeEach(async () => {
+    testUser = await UserService.createProfile({
+      email: "daniel@gmail.com",
+      username: "chiboy",
+      password: testPassword,
+    });
+  });
+
+  test("updates newpassword & invalidates oldpassword", async () => {
+    const newPassword = "newTestPassword";
+    const changed = await UserService.changePassword(testUser.id, newPassword);
+    expect(changed).toBeTruthy();
+
+    let user = await UserService.validateCreds({
+      username: testUser.username,
+      password: testPassword,
+    });
+    expect(user).toBeNull();
+
+    user = await UserService.validateCreds({
+      username: testUser.username,
+      password: newPassword,
+    });
+    expect(user).toBeTruthy();
+    expect(user.email).toBe(testUser.email);
+  });
+});
+
+describe("User Contacts", () => {
+  let user1, user2;
+  beforeEach(async () => {
+    [user1, user2] = await Promise.all([
+      UserModel.create({
+        email: "daniel@gmail.com",
+        username: "chiboy",
+        password: "password",
+      }),
+      UserModel.create({
+        email: "tetst@gmail.com",
+        username: "testy",
+        password: "password",
+      }),
+    ]);
+  });
+
+  test("adds contact for user", async () => {
+    const callType = CALL_TYPE.VIDEO;
+
+    const callsList = await UserService.addToCallList(user1, {
+      callType,
+      userId: user2.id,
+    });
+
+    expect(callsList).toHaveLength(1);
+    expect(callsList[0].user.id).toBe(user2.id);
+    expect(callsList[0].type).toBe(callType);
+  });
+});
+
+// describe("User Contacts", () => {
+//   let user1, user2;
+//   beforeEach(async () => {
+//     [user1, user2] = await UserModel.insertMany([
+//       {
+//         email: "daniel@gmail.com",
+//         username: "chiboy",
+//         password: "password",
+//       },
+//       {
+//         email: "tetst@gmail.com",
+//         username: "testy",
+//         password: "password",
+//       },
+//     ]);
+//   });
+
+//   test("adds contact for user", async () => {
+//     const res = await UserService.addContact(user1, user2.email);
+//     console.log(res);
+//     // expect(changed).toBeTruthy();
+
+//     // let user = await UserService.validateCreds({
+//     //   username: testUser.username,
+//     //   password: testPassword,
+//     // });
+//     // expect(user).toBeNull();
+
+//     // user = await UserService.validateCreds({
+//     //   username: testUser.username,
+//     //   password: newPassword,
+//     // });
+//     // expect(user).toBeTruthy();
+//     // expect(user.email).toBe(testUser.email);
+//   });
+// });

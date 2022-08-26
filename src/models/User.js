@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
-
+import { CALL_TYPE } from "@/constants";
 const { Schema } = mongoose;
+
 const userSchema = new Schema(
   {
     email: {
@@ -13,7 +14,7 @@ const userSchema = new Schema(
     },
     verified: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     username: {
       type: String,
@@ -41,6 +42,20 @@ const userSchema = new Schema(
     // UIpref=>themeColor
     // privacyPref
     // last seen: type Date
+    calls: [
+      new Schema({
+        // call history type: video or call
+        type: {
+          type: String,
+          enum: Object.keys(CALL_TYPE),
+          required: true,
+        },
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Users",
+        },
+      }),
+    ],
   },
   { timestamps: true },
   {

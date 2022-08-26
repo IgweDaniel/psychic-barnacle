@@ -1,3 +1,4 @@
+import config from "@/config";
 import mongoose from "mongoose";
 
 const { Schema } = mongoose;
@@ -18,6 +19,10 @@ const verfiyTokenSchema = new Schema(
       virtuals: true,
     },
   }
+);
+verfiyTokenSchema.index(
+  { createdAt: 1 },
+  { expireAfterSeconds: config.api.verifyTokenDuration }
 );
 
 const model = mongoose.model("verifyToken", verfiyTokenSchema);
